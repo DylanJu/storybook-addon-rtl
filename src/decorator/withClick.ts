@@ -1,7 +1,18 @@
 import { useEffect } from 'react';
-import { getSuggestedQuery } from '@testing-library/react';
+import { getSuggestedQuery, Method } from '@testing-library/react';
 import { addons } from '@storybook/addons';
-import { SUGGEST_QUERY } from '../constants';
+import { SUGGEST_QUERY, POSSIBLE_QUERY } from '../constants';
+
+const queryMethods: Method[] = [
+  'Role',
+  'LabelText',
+  'PlaceholderText',
+  'Text',
+  'DisplayValue',
+  'AltText',
+  'Title',
+  'TestId',
+];
 
 const emmiter = (e: MouseEvent) => {
   const channel = addons.getChannel();
@@ -11,6 +22,15 @@ const emmiter = (e: MouseEvent) => {
   if (suggestion) {
     channel.emit(SUGGEST_QUERY, suggestion.toString());
   }
+
+  const result = {};
+
+  queryMethods.forEach((method) => {
+    const possible = getSuggestedQuery(target, 'get', method);
+    result[method] = possible;
+  });
+
+  channel.emit(POSSIBLE_QUERY, result);
 };
 
 export const withClick = (storyFn, context) => {
