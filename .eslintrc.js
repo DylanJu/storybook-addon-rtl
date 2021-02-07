@@ -63,6 +63,7 @@ module.exports = {
     'no-plusplus': ['error', { allowForLoopAfterthoughts: true }],
     'no-use-before-define': 'off',
     'no-shadow': 'off',
+    'jsx-a11y/label-has-associated-control': 'off',
   },
 
   overrides: [

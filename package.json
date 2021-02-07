@@ -5,7 +5,8 @@
   "main": "dist/preset.js",
   "scripts": {
     "test": "test",
-    "build": "rm -rf dist && babel ./src --out-dir ./dist --extensions \".ts,.tsx\""
+    "build": "rm -rf dist && babel ./src --out-dir ./dist --extensions \".ts,.tsx\"",
+    "sb": "start-storybook -s ./public/img -p 6006"
   },
   "author": "dylanju",
   "license": "ISC",

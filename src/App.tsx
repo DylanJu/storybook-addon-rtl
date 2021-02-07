@@ -1,81 +1,50 @@
-import React, { FC, useState, useRef, useCallback } from 'react';
-import { fireEvent } from '@testing-library/react';
+import React, { FC, useState } from 'react';
+// import { FireFunction, FireObject } from '@testing-library/react';
 import { useChannel } from '@storybook/api';
-import styled from 'styled-components';
-import { SUGGEST_QUERY } from './constants';
-
-const Form = styled('form')`
-  width: 100%;
-`;
-
-const SuggestionQuery = styled('input')`
-  width: 100%;
-  padding: 5px 10px;
-`;
+import { Prefix, QueryType } from 'easy-query-selector';
+import { SUGGEST_QUERY, POSSIBLE_QUERY } from './constants';
+import OptionSelector from './components/OptionSelector';
+import QuerySuggestion from './components/QuerySuggestion';
 
 const App: FC = () => {
-  const [query, setQuery] = useState('');
+  const [prefix, setPrefix] = useState<Prefix>('screen');
+  const [queryType, setQueryType] = useState<QueryType>('get');
+  const [selectedQuery, setSuggestQuery] = useState('');
+  // const [possibleQuery, setPossibleQuery] = useState('');
   const [selectedEvent, setSelectedEvent] = useState('click');
-  const queryRef = useRef<HTMLInputElement>(null);
-  const eventsRef = useRef<HTMLInputElement>(null);
 
   useChannel({
     [SUGGEST_QUERY]: (value) => {
-      setQuery(value);
+      setSuggestQuery(value);
+    },
+    [POSSIBLE_QUERY]: (value) => {
+      console.log('aa', value);
     },
   });
 
-  const onClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
-    const { value } = e.currentTarget;
+  // const onEventChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  //   setSelectedEvent(e.currentTarget.value);
+  // };
 
-    if (value === 'query' && queryRef && queryRef.current) {
-      queryRef.current.select();
-      document.execCommand('copy');
-      queryRef.current.blur();
-    }
+  const onPrefixChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setPrefix(e.currentTarget.value as Prefix);
+  };
 
-    if (value === 'selectedEvent' && eventsRef && eventsRef.current) {
-      eventsRef.current.select();
-      document.execCommand('copy');
-      eventsRef.current.blur();
-    }
-  }, []);
-
-  const onEventChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedEvent(e.currentTarget.value);
+  const onQueryTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setQueryType(e.currentTarget.value as QueryType);
   };
 
   return (
-    <div>
-      <Form>
-        <button type="button" onClick={onClick} value="query">
-          button
-        </button>
-        <label>
-          <SuggestionQuery placeholder="click dom" ref={queryRef} type="text" value={`screen.${query};`} readOnly />
-        </label>
-      </Form>
-      <Form>
-        <button type="button" onClick={onClick} value="avaliableEvents">
-          button
-        </button>
-        <select value={selectedEvent} onChange={onEventChange}>
-          {Object.keys(fireEvent).map((value) => (
-            <option key={value} value={value}>
-              {value}
-            </option>
-          ))}
-        </select>
-        <label>
-          <SuggestionQuery
-            ref={eventsRef}
-            type="text"
-            value={`fireEvent.${selectedEvent}(screen.${query});`}
-            readOnly
-          />
-        </label>
-      </Form>
-    </div>
+    <main>
+      <OptionSelector
+        prefix={prefix}
+        onPrefixChange={onPrefixChange}
+        queryType={queryType}
+        onQueryTypeChange={onQueryTypeChange}
+      />
+      <QuerySuggestion prefix={prefix} selectedQuery={selectedQuery} />
+      <QuerySuggestion prefix={prefix} selectedQuery={selectedEvent} />
+    </main>
   );
 };
 
