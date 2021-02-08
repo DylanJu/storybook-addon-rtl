@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { fireEvent, EventType } from '@testing-library/react';
-import { Prefix, QueryType } from 'easy-query-selector';
+import { fireEvent, EventType, Variant } from '@testing-library/react';
+import { Prefix } from 'easy-query-selector';
 
 const Root = styled('div')`
   display: flex;
@@ -55,14 +55,14 @@ const Arrow = styled('span')`
 export interface Props {
   prefix: Prefix;
   onPrefixChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-  queryType: QueryType;
-  onQueryTypeChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-  eventType: EventType;
+  variant: Variant;
+  onVariantChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  eventType: EventType | '';
   onEventTypeChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
 const prefixOptions: Prefix[] = ['screen', 'cy'];
-const queryTypeOptions: QueryType[] = ['get', 'query', 'find'];
+const variantOptions: Variant[] = ['get', 'getAll', 'query', 'queryAll', 'find', 'findAll'];
 const eventOptinos = Object.keys(fireEvent);
 eventOptinos.sort((a, b) => a.localeCompare(b));
 Object.freeze(eventOptinos);
@@ -70,16 +70,16 @@ Object.freeze(eventOptinos);
 const optionSelector: React.FC<Props> = ({
   prefix,
   onPrefixChange,
-  queryType,
-  onQueryTypeChange,
+  variant,
+  onVariantChange,
   eventType,
   onEventTypeChange,
 }) => {
   return (
     <Root>
       <SelectBox>
-        <Label htmlFor="prefix-select">Prefix</Label>
-        <Select id="prefix-select" value={prefix} onChange={onPrefixChange}>
+        <Label htmlFor="prefix-selector">Prefix</Label>
+        <Select id="prefix-selector" value={prefix} onChange={onPrefixChange}>
           {prefixOptions.map((prefixOption) => (
             <option key={prefixOption} value={prefixOption}>
               {prefixOption}
@@ -89,19 +89,19 @@ const optionSelector: React.FC<Props> = ({
         <Arrow />
       </SelectBox>
       <SelectBox>
-        <Label htmlFor="query-type-select">Query Type</Label>
-        <Select id="query-type-select" value={queryType} onChange={onQueryTypeChange}>
-          {queryTypeOptions.map((queryTypeOption) => (
-            <option key={queryTypeOption} value={queryTypeOption}>
-              {queryTypeOption}
+        <Label htmlFor="variant-selector">Variant</Label>
+        <Select id="variant-selector" value={variant} onChange={onVariantChange}>
+          {variantOptions.map((variantOption) => (
+            <option key={variantOption} value={variantOption}>
+              {variantOption}
             </option>
           ))}
         </Select>
         <Arrow />
       </SelectBox>
       <SelectBox>
-        <Label htmlFor="event-type-select">Event Type</Label>
-        <Select id="event-type-select" value={eventType} onChange={onEventTypeChange}>
+        <Label htmlFor="event-selector">Event</Label>
+        <Select id="event-selector" value={eventType} onChange={onEventTypeChange}>
           {eventOptinos.map((event) => (
             <option key={event} value={event}>
               {event}

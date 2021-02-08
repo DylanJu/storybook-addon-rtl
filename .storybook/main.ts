@@ -5,7 +5,7 @@ module.exports = {
     // '../dist/preset',
   ],
   webpackFinal: (config) => {
-    config.resolve.alias['@storybook/api'] = require.resolve('./useChannelMock.ts');
+    config.resolve.alias['@storybook/api'] = require.resolve('./storybookApiMock.ts');
     return config;
   },
 };

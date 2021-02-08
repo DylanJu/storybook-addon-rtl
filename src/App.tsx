@@ -1,23 +1,32 @@
-import React, { FC, useState } from 'react';
-import { EventType } from '@testing-library/react';
-import { useChannel } from '@storybook/api';
-import { Prefix, QueryType } from 'easy-query-selector';
-import { SUGGEST_QUERY, POSSIBLE_QUERY } from './constants';
+import React, { FC, useState, useEffect } from 'react';
+import styled from 'styled-components';
+import { EventType, Variant } from '@testing-library/react';
+import { useChannel, useGlobals } from '@storybook/api';
+import { Prefix, PossibleQueries } from 'easy-query-selector';
+import { POSSIBLE_QUERIES, VARIANT } from './constants';
 import OptionSelector from './components/OptionSelector';
-import QuerySuggestion from './components/QuerySuggestion';
+import ResultSelector from './components/ResultSelector';
+
+const Main = styled('main')`
+  padding: 10px;
+`;
 
 const App: FC = () => {
+  const [globals, updateGlobals] = useGlobals();
+  const variant: Variant = globals[VARIANT];
   const [prefix, setPrefix] = useState<Prefix>('screen');
-  const [queryType, setQueryType] = useState<QueryType>('get');
   const [eventType, setEventType] = useState<EventType | ''>('click');
-  const [selectedQuery, setSuggestQuery] = useState('');
+  const [possibleQueries, setPossibleQueries] = useState<string[]>([]);
+
+  useEffect(() => {
+    updateGlobals({
+      [VARIANT]: 'get',
+    });
+  }, []);
 
   useChannel({
-    [SUGGEST_QUERY]: (value) => {
-      setSuggestQuery(value);
-    },
-    [POSSIBLE_QUERY]: (value) => {
-      console.log('aa', value);
+    [POSSIBLE_QUERIES]: (value: PossibleQueries) => {
+      setPossibleQueries(Object.keys(value).map((method) => `${prefix}.${value[method]}`));
     },
   });
 
@@ -25,8 +34,10 @@ const App: FC = () => {
     setPrefix(e.currentTarget.value as Prefix);
   };
 
-  const onQueryTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setQueryType(e.currentTarget.value as QueryType);
+  const onVariantChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    updateGlobals({
+      [VARIANT]: e.currentTarget.value as Variant,
+    });
   };
 
   const onEventTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -34,18 +45,17 @@ const App: FC = () => {
   };
 
   return (
-    <main>
+    <Main>
       <OptionSelector
         prefix={prefix}
         onPrefixChange={onPrefixChange}
-        queryType={queryType}
-        onQueryTypeChange={onQueryTypeChange}
+        variant={variant}
+        onVariantChange={onVariantChange}
         eventType={eventType}
         onEventTypeChange={onEventTypeChange}
       />
-      <QuerySuggestion label="Query" prefix={prefix} selectedQuery={selectedQuery} />
-      <QuerySuggestion label="Event" prefix={prefix} selectedQuery={selectedQuery === '' ? '' : eventType} />
-    </main>
+      <ResultSelector label="Result" resultOptions={possibleQueries} />
+    </Main>
   );
 };
 

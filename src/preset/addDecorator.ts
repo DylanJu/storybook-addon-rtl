@@ -1,3 +1,3 @@
-import { withClick } from '../decorator/withClick';
+import { decoClick } from '../decorator/decoClick';
 
-export const decorators = [withClick];
+export const decorators = [decoClick];
