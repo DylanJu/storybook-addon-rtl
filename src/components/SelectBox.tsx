@@ -4,23 +4,25 @@ import styled from 'styled-components';
 const Root = styled('div')`
   position: relative;
   display: flex;
-  flex: 1 1;
   box-sizing: border-box;
+  flex: 1 1;
   margin-right: 10px;
   border-radius: 6px;
   z-index: 1;
 `;
 
 const Label = styled('label')`
-  flex: 0 0;
+  flex: 0 0 40px;
   padding: 0 12px;
   border: 1px solid rgb(209, 213, 219);
   border-radius: 6px 0 0 6px;
   border-right: none;
   font-size: 12px;
-  line-height: 30px;
+  line-height: 31px;
+  text-align: center;
   background-color: rgb(249, 250, 251);
   color: rgb(107, 114, 128);
+  font-family: sans-serif;
 `;
 
 const Select = styled('select')`
@@ -53,7 +55,7 @@ const Arrow = styled('span')`
   transform: rotate(45deg);
 `;
 
-interface Props {
+export interface Props {
   id: string;
   label: string;
   selected: string;
